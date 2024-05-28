@@ -291,6 +291,7 @@ trigger_variables:
 
 variables:
   cover: !input cover
+  cover_friendlyName: "{{ state_attr(cover, 'friendly_name')}}"
   area_id: "{{ area_id(cover)}}"
   scene_id: "temp_cover_automation_{{ area_id }}"
 
@@ -412,7 +413,7 @@ action:
           - service: notify.mobile_app_iphone_von_carsten
             metadata: {}
             data:
-              message: "Cover close (Trigger: {{ trigger.id }})"
+              message: "{{ cover_friendlyName }} close (Trigger: {{ trigger.id }})"
           - if:
               - "{{ tv_window_sensor != [] }}"
               - "{{ is_state(tv_window_sensor, ['true', 'on']) }}"
@@ -465,7 +466,7 @@ action:
           - service: notify.mobile_app_iphone_von_carsten
             metadata: {}
             data:
-              message: "Cover open (Trigger: {{ trigger.id }})"
+              message: "{{ cover_friendlyName }} open (Trigger: {{ trigger.id }})"
           - if:
               - "{{ trigger.id == 't_vent_open'}}"
               - "{{ current_position < pos_vent_threshold }}"
