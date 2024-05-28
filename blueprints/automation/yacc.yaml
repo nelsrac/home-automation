@@ -512,11 +512,9 @@ action:
                   #   state: "on"
                 then:
                   - wait_for_trigger:
-                    - platform: state
-                      entity_id:
-                        - !input presence_sensor
-                      from: "on"
-                      to: "off"
+                    - platform: template
+                      value_template: >
+                        {{ is_state(tv_presence_sensor, 'off') }}
                       for:
                         minutes: !input time_precense_absence_duration
                   - service: cover.open_cover
