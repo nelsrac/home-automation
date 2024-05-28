@@ -19,7 +19,7 @@ blueprint:
   input:
     auto_options:
       name: "👉 Automation Options"
-      description: >-
+      description: |-
         Control the possibilities of the blueprint.
 
         <details>
@@ -51,7 +51,7 @@ blueprint:
 
     cover:
       name: "🏠 Select Cover"
-      description: >-
+      description: |-
         Which blind or roller shutter should be automated?
 
         <details>
@@ -142,7 +142,7 @@ blueprint:
 
     time_open_workday:
       name: 🛡️ Time to open Cover (Privacy enabled, weekday)
-      description: >-
+      description: |-
         Open cover at workdays if privacy protection is enabled.
 
 
@@ -153,7 +153,7 @@ blueprint:
 
     time_open_weekend:
       name: 🛡️ Time to open Cover (Privacy enabled, weekend)
-      description: >-
+      description: |-
         Open cover at weekends or holidays if privacy protection is enabled. Cover might be opened later if presence sensor is defined.
 
 
@@ -164,7 +164,7 @@ blueprint:
 
     time_no_vent:
       name: 🪟 Select time to avoid cover to move for ventilation
-      description: >-
+      description: |-
         This setting is usefull if you want to open the window during the night (e.g. in beedroom) and not to open the cover.
 
 
@@ -175,7 +175,7 @@ blueprint:
 
     time_vent_close_delay:
       name: 🪟 Time delay to close cover (ventilation).
-      description: >-
+      description: |-
         With this setting accidental cover closing is avoided.
 
 
@@ -189,7 +189,7 @@ blueprint:
 
     window_sensor:
       name: 🪟 Select Window (binary) sensor
-      description: >-
+      description: |-
         Enables the automation to open the cover for ventilation purpose or move the cover only if window is closed.
 
 
@@ -203,7 +203,7 @@ blueprint:
 
     presence_sensor:
       name: 🛌 Select presence (binary) sensor
-      description: >-
+      description: |-
         Enables the automation to open the cover in the morning after the last one has left the room. Helpful on bedrooms, especially at weekend.
 
 
@@ -217,7 +217,7 @@ blueprint:
 
     time_precense_absence_duration:
       name: 🛏️ Time of absence
-      description: >-
+      description: |-
         Adds time to presence sensors detecting absense.
 
 
@@ -305,7 +305,7 @@ variables:
 trigger:
   - alias: Privacy Protection
     platform: template
-    value_template: >-
+    value_template: |-
       {{
         tv_close_enabled and
         tv_privacy_protection_enabled and
@@ -318,7 +318,7 @@ trigger:
 
   - alias: Close Cover Lux
     platform: template
-    value_template: >-
+    value_template: |-
       {{
         tv_close_enabled and
         not tv_privacy_protection_enabled and
@@ -329,7 +329,7 @@ trigger:
 
   - alias: Open Cover Lux
     platform: template
-    value_template: >-
+    value_template: |-
       {{
         tv_open_enabled and
         not tv_privacy_protection_enabled and
@@ -355,7 +355,7 @@ trigger:
 
   - alias: "Terminate privacy protection"
     platform: template
-    value_template: >-
+    value_template: |-
       {{
         tv_open_enabled and
         tv_privacy_protection_enabled and
@@ -385,7 +385,7 @@ trigger:
 
   - alias: Ventilate open
     platform: template
-    value_template: >-
+    value_template: |-
       {{
         tv_vent_enabled and
         tv_window_sensor != [] and is_state(tv_window_sensor, ['true', 'on']) and
@@ -395,7 +395,7 @@ trigger:
 
   - alias: "Ventilate close"
     platform: template
-    value_template: >-
+    value_template: |-
       {{
         tv_vent_enabled and
         tv_window_sensor != [] and is_state(tv_window_sensor, ['false', 'off'])
@@ -403,6 +403,15 @@ trigger:
     for:
       seconds: !input time_vent_close_delay
     id: t_vent_close
+
+  - alias: "Delete vent scene"
+    platform: template
+    value_template: |-
+      {{
+        now() > today_at(tv_time_no_vent) or
+        today_at('23:59:59')
+      }}
+    id: t_vent_delete_scene
 
 condition: []
 
