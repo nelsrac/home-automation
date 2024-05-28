@@ -509,7 +509,7 @@ action:
                   from: "on"
                   to: "off"
                   for:
-                    seconds: !input time_precense_absence_duration
+                    minutes: !input time_precense_absence_duration
               - service: cover.open_cover
                 metadata: {}
                 data: {}
