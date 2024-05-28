@@ -217,7 +217,7 @@ blueprint:
         entity:
           filter:
             - domain: binary_sensor
-              device_class: window
+              device_class: [window, door]
 
     presence_sensor:
       name: 🛌 Select presence (binary) sensor
@@ -283,7 +283,7 @@ blueprint:
           filter:
             - domain: binary_sensor
 
-mode: restart
+mode: single
 
 trigger_variables:
   tv_auto_options: !input auto_options
@@ -321,6 +321,11 @@ variables:
   current_position: "{{ state_attr(cover, 'current_position') }}"
   in_vent_position: "{{ current_position | int() == pos_vent }}"
   in_close_position: "{{ current_position | int() == pos_close }}"
+
+  is_morning: "{{ now() >= today_at('04:30:00') and now() < today_at('12:00:00') }}"
+  is_afternoon: "{{ now() >= today_at('12:00:00') and now() < today_at('16:00:00') }}"
+  is_evening: "{{ now() >= today_at('16:00:00') and now() < today_at('23:59:59') }}"
+  is_night: "{{ now() >= today_at('00:00:00') and now() < today_at('04:30:00') }}"
 
 trigger:
   - alias: Privacy Protection
@@ -429,11 +434,8 @@ action:
               - t_lux_close
               - t_vent_close
         sequence:
-          - service: notify.mobile_app_iphone_von_carsten
-            metadata: {}
-            data:
-              message: "{{ cover_friendlyName }} close (Trigger: {{ trigger.id }})"
           - if:
+              - "{{ trigger.id == 't_lux_close' or trigger.id == 't_privacy_protection' }}"
               - "{{ tv_window_sensor != [] }}"
               - "{{ is_state(tv_window_sensor, ['true', 'on']) }}"
             then:
@@ -441,20 +443,9 @@ action:
                   - platform: template
                     value_template: "{{ is_state(tv_window_sensor, ['false', 'off']) }}"
           - if:
-              - condition: and
-                conditions:
-                  - "{{ trigger.id == 't_vent_close' }}"
-                  - "{{ in_vent_position }}"
+              - "{{ trigger.id == 't_lux_close' or trigger.id == 't_privacy_protection' }}"
+              - "{{ is_evening }}"
             then:
-              - service: scene.turn_on
-                data: {}
-                target:
-                  entity_id: "scene.{{ scene_id }}"
-              - service: scene.delete
-                data: {}
-                target:
-                  entity_id: "{{ scene_entity }}"
-            else:
               - if:
                   - "{{ pos_close != 0 }}"
                 then:
@@ -470,7 +461,19 @@ action:
                     data: {}
                     target:
                       entity_id: !input cover
-
+            else:
+              - if:
+                  - "{{ trigger.id == 't_vent_close' }}"
+                  - "{{ in_vent_position }}"
+                then:
+                  - service: scene.turn_on
+                    data: {}
+                    target:
+                      entity_id: "{{ scene_entity }}"
+                  - service: scene.delete
+                    data: {}
+                    target:
+                      entity_id: "{{ scene_entity }}"
       - conditions:
           - alias: Open cover
             condition: trigger
@@ -478,31 +481,11 @@ action:
               - t_lux_open
               - t_vent_open
               - t_terminate_privacy_protection
-              - t_terminate_privacy_protection_with_presence
+              - t_terminate_privacy_protection_with_precense
         sequence:
-          - service: notify.mobile_app_iphone_von_carsten
-            metadata: {}
-            data:
-              message: "{{ cover_friendlyName }} open (Trigger: {{ trigger.id }})"
           - if:
-              - "{{ trigger.id == 't_vent_open'}}"
-              - "{{ current_position < pos_vent_threshold }}"
-              - "{{ not now() == today_at('00:00:00') }}"
-            then:
-              - service: scene.create
-                metadata: {}
-                data:
-                  scene_id: "{{ scene_id }}"
-                  snapshot_entities:
-                    - !input cover
-              - service: cover.set_cover_position
-                metadata: {}
-                data:
-                  position: "{{ pos_vent }}"
-                target:
-                  entity_id: !input cover
-          - if:
-              - "{{ trigger.id == 't_terminate_privacy_protection' }}"
+              - "{{ trigger.id == 't_lux_open' or trigger.id == 't_terminate_privacy_protection' }}"
+              - "{{ is_morning }}"
             then:
               - service: cover.open_cover
                 metadata: {}
@@ -511,7 +494,8 @@ action:
                   entity_id: !input cover
             else:
               - if:
-                  - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' and is_state(tv_presence_sensor, 'on') }}"
+                  - "{{ trigger.id == 't_terminate_privacy_protection_with_precense' }}"
+                  - "{{ is_morning }}"
                 then:
                   - wait_for_trigger:
                     - platform: template
@@ -524,11 +508,23 @@ action:
                     target:
                       entity_id: !input cover
                 else:
-                  - service: cover.open_cover
-                    metadata: {}
-                    data: {}
-                    target:
-                      entity_id: !input cover
+                  - if:
+                      - "{{ trigger.id == 't_vent_open' }}"
+                      - "{{ current_position < pos_vent_threshold }}"
+                      - "{{ not is_night }}"
+                    then:
+                      - service: scene.create
+                        metadata: {}
+                        data:
+                          scene_id: "{{ scene_id }}"
+                          snapshot_entities:
+                            - !input cover
+                      - service: cover.set_cover_position
+                        metadata: {}
+                        data:
+                          position: "{{ pos_vent }}"
+                        target:
+                          entity_id: !input cover
 
   - if:
       - "{{ trigger.id == 't_vent_delete_scene' }}"
