@@ -296,6 +296,7 @@ variables:
 
   pos_close: !input pos_close
   pos_vent: !input pos_vent
+  pos_vent_threshold: !input pos_vent_threshold
 
   current_position: "{{ state_attr(cover, 'current_position') }}"
   in_vent_position: "{{ current_position | int() == pos_vent }}"
@@ -346,7 +347,7 @@ trigger:
         tv_privacy_protection_enabled and
         not tv_presence_enabled and
         tv_presence_sensor == [] and tv_workday_sensor != [] and tv_illuminance_sensor != [] and
-        states(tv_illuminance_sensor) | float(default=tv_lux_open) >= tv_lux_open  and
+        states(tv_illuminance_sensor) | float(default=tv_lux_open) >= tv_lux_open and
         (is_state(tv_workday_sensor, 'on') and now() >= today_at(tv_time_open_workday) or
         is_state(tv_workday_sensor, 'off') and now() >= today_at(tv_time_open_weekend))
       }}
@@ -460,6 +461,7 @@ action:
               message: "Cover open (Trigger: {{ trigger.id }})"
           - if:
               - "{{ trigger.id == 't_vent_open'}}"
+              - "{{ current_position < pos_vent_threshold }}"
             then:
               - service: scene.create
                 metadata: {}
