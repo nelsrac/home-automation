@@ -506,8 +506,7 @@ action:
                   entity_id: !input cover
             else:
               - if:
-                  - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' }}"
-                  - "{{ is_state(tv_presence_sensor, 'on') }}"
+                  - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' and is_state(tv_presence_sensor, 'on') }}"
                   # - condition: state
                   #   entity_id: !input presence_sensor
                   #   state: "on"
