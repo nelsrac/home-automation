@@ -294,6 +294,7 @@ variables:
   cover_friendlyName: "{{ state_attr(cover, 'friendly_name')}}"
   area_id: "{{ area_id(cover)}}"
   scene_id: "temp_cover_automation_{{ area_id }}"
+  scene_entity: "scene.{{ scene_id }}"
 
   pos_close: !input pos_close
   pos_vent: !input pos_vent
@@ -434,7 +435,7 @@ action:
               - service: scene.delete
                 data: {}
                 target:
-                  entity_id: "scene.{{ scene_id }}"
+                  entity_id: "{{ scene_entity }}"
             else:
               - if:
                   - "{{ pos_close != 0 }}"
@@ -511,10 +512,10 @@ action:
                     target:
                       entity_id: !input cover
 
-#  - if:
-#      - "{{ trigger.id == 't_vent_delete_scene' }}"
-#      - "{{ states(scene_entity) | is defined }}"
-#    then:
-#      - service: scene.delete
-#        target:
-#          entity_id: "{{ scene_entity }}"
+  - if:
+      - "{{ trigger.id == 't_vent_delete_scene' }}"
+      - "{{ states(scene_entity) | is_defined }}"
+    then:
+      - service: scene.delete
+        target:
+          entity_id: "{{ scene_entity }}"
