@@ -358,6 +358,7 @@ trigger:
     value_template: >-
       {{
         tv_open_enabled and
+        tv_privacy_protection_enabled and
         tv_presence_enabled and
         tv_presence_sensor != [] and tv_workday_sensor != [] and tv_illuminance_sensor != [] and
         is_state(tv_presence_sensor, ['false', 'off']) and
