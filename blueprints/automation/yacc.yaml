@@ -419,10 +419,8 @@ action:
               - "{{ is_state(tv_window_sensor, ['true', 'on']) }}"
             then:
               - wait_for_trigger:
-                  - platform: state
-                    entity_id:
-                      - !input window_sensor
-                    to: ["false", "off"]
+                  - platform: template
+                    value_template: "{{ is_state(tv_window_sensor, ['false', 'off']) }}"
           - if:
               - condition: and
                 conditions:
