@@ -505,20 +505,20 @@ action:
                 target:
                   entity_id: !input cover
             else:
-          - if:
-              - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' }}"
-              - condition: state
-                entity_id: !input presence_sensor
-                state: "on"
-            then:
-              - wait_for_trigger:
-                - platform: state
-                  entity_id:
-                    - !input presence_sensor
-                  from: "on"
-                  to: "off"
-                  for:
-                    minutes: !input time_precense_absence_duration
+              - if:
+                  - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' }}"
+                  - condition: state
+                    entity_id: !input presence_sensor
+                    state: "on"
+                then:
+                  - wait_for_trigger:
+                    - platform: state
+                      entity_id:
+                        - !input presence_sensor
+                      from: "on"
+                      to: "off"
+                      for:
+                        minutes: !input time_precense_absence_duration
                   - service: cover.open_cover
                     metadata: {}
                     data: {}
