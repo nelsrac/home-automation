@@ -481,7 +481,7 @@ action:
               - t_lux_open
               - t_vent_open
               - t_terminate_privacy_protection
-              - t_terminate_privacy_protection_with_precense
+              - t_terminate_privacy_protection_with_presence
         sequence:
           - if:
               - "{{ trigger.id == 't_lux_open' or trigger.id == 't_terminate_privacy_protection' }}"
@@ -494,7 +494,7 @@ action:
                   entity_id: !input cover
             else:
               - if:
-                  - "{{ trigger.id == 't_terminate_privacy_protection_with_precense' }}"
+                  - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' }}"
                   - "{{ is_morning }}"
                 then:
                   - wait_for_trigger:
