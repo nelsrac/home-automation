@@ -337,7 +337,7 @@ trigger:
         tv_illuminance_sensor != [] and
         states(tv_illuminance_sensor) | float(default=tv_lux_open) <= tv_lux_open
       }}
-      id: t_lux_open
+    id: t_lux_open
 
   # - alias: "Terminate privacy protection" #### WORKING
   #   platform: template
