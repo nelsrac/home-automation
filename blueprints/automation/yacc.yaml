@@ -526,10 +526,10 @@ action:
                     target:
                       entity_id: !input cover
 
-  - if:
-      - "{{ trigger.id == 't_vent_delete_scene' }}"
-      - "{{ states(scene_entity) | is defined }}"
-    then:
-      - service: scene.delete
-        target:
-          entity_id: "{{ scene_entity }}"
+#  - if:
+#      - "{{ trigger.id == 't_vent_delete_scene' }}"
+#      - "{{ states(scene_entity) | is defined }}"
+#    then:
+#      - service: scene.delete
+#        target:
+#          entity_id: "{{ scene_entity }}"
