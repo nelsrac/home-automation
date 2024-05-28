@@ -507,9 +507,10 @@ action:
             else:
               - if:
                   - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' }}"
-                  - condition: state
-                    entity_id: !input presence_sensor
-                    state: "on"
+                  - "{{ is_state(tv_presence_sensor, 'on') }}"
+                  # - condition: state
+                  #   entity_id: !input presence_sensor
+                  #   state: "on"
                 then:
                   - wait_for_trigger:
                     - platform: state
