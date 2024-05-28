@@ -347,8 +347,8 @@ trigger:
         not tv_presence_enabled and
         tv_presence_sensor == [] and tv_workday_sensor != [] and tv_illuminance_sensor != [] and
         states(tv_illuminance_sensor) | float(default=tv_lux_open) >= tv_lux_open  and
-        is_state(tv_workday_sensor, 'on') and now() >= today_at(tv_time_open_workday) or
-        is_state(tv_workday_sensor, 'off') and now() >= today_at(tv_time_open_weekend)
+        (is_state(tv_workday_sensor, 'on') and now() >= today_at(tv_time_open_workday) or
+        is_state(tv_workday_sensor, 'off') and now() >= today_at(tv_time_open_weekend))
       }}
     id: t_terminate_privacy_protection
 
@@ -362,8 +362,8 @@ trigger:
         tv_presence_sensor != [] and tv_workday_sensor != [] and tv_illuminance_sensor != [] and
         is_state(tv_presence_sensor, ['false', 'off']) and
         states(tv_illuminance_sensor) | float(default=tv_lux_open) >= tv_lux_open and
-        is_state(tv_workday_sensor, 'on') and now() >= today_at(tv_time_open_workday) or
-        is_state(tv_workday_sensor, 'off') and now() >= today_at(tv_time_open_weekend)
+        (is_state(tv_workday_sensor, 'on') and now() >= today_at(tv_time_open_workday) or
+        is_state(tv_workday_sensor, 'off') and now() >= today_at(tv_time_open_weekend))
       }}
     for:
       minutes: !input time_precense_absence_duration
