@@ -277,7 +277,7 @@ trigger_variables:
 
   # tv_cover_sensor: !input cover
   tv_illuminance_sensor: !input illuminance_sensor
-  # tv_presence_sensor: !input presence_sensor
+  tv_presence_sensor: !input presence_sensor
   tv_window_sensor: !input window_sensor
   tv_workday_sensor: !input workday_sensor
 
@@ -291,8 +291,6 @@ trigger_variables:
 
 variables:
   cover: !input cover
-  presence_sensor: !input presence_sensor
-
   area_id: "{{ area_id(cover)}}"
   scene_id: "temp_cover_automation_{{ area_id }}"
 
@@ -493,7 +491,7 @@ action:
                   entity_id: !input cover
           - if:
               - "{{ trigger.id == 't_terminate_privacy_protection' }}"
-              - "{{ presence_sensor != [] }}"
+              - "{{ tv_presence_sensor != [] }}"
               - condition: state
                 entity_id: !input presence_sensor
                 state: "on"
@@ -514,7 +512,7 @@ action:
             else:
               - if:
                   - "{{ trigger.id == 't_terminate_privacy_protection' }}"
-                  - "{{ presence_sensor == [] }}"
+                  - "{{ tv_presence_sensor == [] }}"
                 then:
                   - service: cover.open_cover
                     metadata: {}
