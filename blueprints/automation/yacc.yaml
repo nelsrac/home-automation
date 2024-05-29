@@ -233,7 +233,7 @@ blueprint:
             - domain: binary_sensor
               device_class: presence
 
-    time_precense_absence_duration:
+    time_presence_absence_duration:
       name: 🛏️ Time of absence
       description: |-
         Adds time to presence sensors detecting absense.
@@ -501,7 +501,7 @@ action:
                     - platform: template
                       value_template: "{{ is_state(tv_presence_sensor, 'off') }}"
                       for:
-                        minutes: !input time_precense_absence_duration
+                        minutes: !input time_presence_absence_duration
                   - service: cover.open_cover
                     metadata: {}
                     data: {}
