@@ -484,8 +484,8 @@ action:
               - t_terminate_privacy_protection_with_presence
         sequence:
           - if:
-              - "{{ trigger.id == 't_lux_open' or trigger.id == 't_terminate_privacy_protection' }}"
-              - "{{ is_morning }}"
+              - "{{ trigger.id == 't_lux_open' or trigger.id == 't_terminate_privacy_protection' or ( trigger.id == 't_terminate_privacy_protection_with_presence' and is_state(tv_presence_sensor, 'off') ) }}"
+              - "{{ not is_night }}"
             then:
               - service: cover.open_cover
                 metadata: {}
@@ -495,7 +495,8 @@ action:
             else:
               - if:
                   - "{{ trigger.id == 't_terminate_privacy_protection_with_presence' }}"
-                  - "{{ is_morning }}"
+                  - "{{ is_state(tv_presence_sensor, 'on')}}"
+                  - "{{ not is_night }}"
                 then:
                   - wait_for_trigger:
                     - platform: template
