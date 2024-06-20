@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 blueprint:
-  name: Yet Another Cover Control (DEV)
+  name: Yet Another Cover Control
   author: https://github.com/carslen
   description: |-
     # Cover Control Blueprint
