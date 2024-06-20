@@ -442,6 +442,21 @@ action:
               - wait_for_trigger:
                   - platform: template
                     value_template: "{{ is_state(tv_window_sensor, ['false', 'off']) }}"
+              - if:
+                  - "{{ pos_close != 0 }}"
+                then:
+                  - service: cover.set_cover_position
+                    metadata: {}
+                    data:
+                      position: "{{ pos_close }}"
+                    target:
+                      entity_id: !input cover
+                else:
+                  - service: cover.close_cover
+                    metadata: {}
+                    data: {}
+                    target:
+                      entity_id: !input cover
           - if:
               - "{{ trigger.id == 't_lux_close' or trigger.id == 't_privacy_protection' }}"
               - "{{ is_evening }}"
