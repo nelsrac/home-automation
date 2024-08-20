@@ -474,14 +474,14 @@ action:
               - if:
                   - "{{ pos_close != 0 }}"
                 then:
-                  - service: cover.set_cover_position
+                  - action: cover.set_cover_position
                     metadata: {}
                     data:
                       position: "{{ pos_close }}"
                     target:
                       entity_id: !input cover
                 else:
-                  - service: cover.close_cover
+                  - action: cover.close_cover
                     metadata: {}
                     data: {}
                     target:
@@ -493,14 +493,14 @@ action:
               - if:
                   - "{{ pos_close != 0 }}"
                 then:
-                  - service: cover.set_cover_position
+                  - action: cover.set_cover_position
                     metadata: {}
                     data:
                       position: "{{ pos_close }}"
                     target:
                       entity_id: !input cover
                 else:
-                  - service: cover.close_cover
+                  - action: cover.close_cover
                     metadata: {}
                     data: {}
                     target:
@@ -510,11 +510,11 @@ action:
                   - "{{ trigger.id == 't_vent_close' }}"
                   - "{{ in_vent_position }}"
                 then:
-                  - service: scene.turn_on
+                  - action: scene.turn_on
                     data: {}
                     target:
                       entity_id: "{{ scene_entity }}"
-                  - service: scene.delete
+                  - action: scene.delete
                     data: {}
                     target:
                       entity_id: "{{ scene_entity }}"
@@ -531,7 +531,7 @@ action:
               - "{{ trigger.id == 't_lux_open' or trigger.id == 't_terminate_privacy_protection' or ( trigger.id == 't_terminate_privacy_protection_with_presence' and is_state(tv_presence_sensor, 'off') ) }}"
               - "{{ not is_night }}"
             then:
-              - service: cover.open_cover
+              - action: cover.open_cover
                 metadata: {}
                 data: {}
                 target:
@@ -547,7 +547,7 @@ action:
                       value_template: "{{ is_state(tv_presence_sensor, 'off') }}"
                       for:
                         minutes: !input time_presence_absence_duration
-                  - service: cover.open_cover
+                  - action: cover.open_cover
                     metadata: {}
                     data: {}
                     target:
@@ -558,13 +558,13 @@ action:
                       - "{{ current_position < pos_vent_threshold }}"
                       - "{{ not is_night }}"
                     then:
-                      - service: scene.create
+                      - action: scene.create
                         metadata: {}
                         data:
                           scene_id: "{{ scene_id }}"
                           snapshot_entities:
                             - !input cover
-                      - service: cover.set_cover_position
+                      - action: cover.set_cover_position
                         metadata: {}
                         data:
                           position: "{{ pos_vent }}"
@@ -575,6 +575,6 @@ action:
       - "{{ trigger.id == 't_vent_delete_scene' }}"
       - "{{ states(scene_entity) | is_defined }}"
     then:
-      - service: scene.delete
+      - action: scene.delete
         target:
           entity_id: "{{ scene_entity }}"
