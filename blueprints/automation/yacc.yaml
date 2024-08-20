@@ -24,7 +24,7 @@ blueprint:
   name: Yet Another Cover Control
   author: https://github.com/carslen
   description: |-
-    # Cover Control Blueprint
+    # Yet Another Cover Control Blueprint
 
     Control your cover related to outdoor illuminance and window state (open/close). Requires [Workday](https://www.home-assistant.io/integrations/workday/) integration.
     <details>
@@ -41,213 +41,249 @@ blueprint:
 
   domain: automation
   input:
-    auto_options:
-      name: "👉 Automation Options"
-      description: |-
-        Control the possibilities of the blueprint.
+    blueprint_options:
+      name: Blueprint Configuration
+      icon: mdi:cog-outline
+      description: Configure the options and settings of the YACC Blueprint.
+      input:
+        auto_options:
+          name: "👉 Automation Options"
+          description: Control the possibilities of the blueprint.
+          default: [auto_open, auto_close, auto_vent]
+          selector:
+            select:
+              options:
+                - label: "⬆️ Enable automatic daily cover opening"
+                  value: auto_open
+                - label: "⬇️ Enable automatic daily cover closing"
+                  value: auto_close
+                - label: "🪟 Enable ventilation"
+                  value: auto_vent
+                - label: "🛡️ Enable privacy protection"
+                  value: auto_privacy
+                - label: "🛌 Enable presence detection"
+                  value: auto_presence
+                - label: "🥵 Enable Shading"
+                  value: auto_shading
+              multiple: true
+              sort: false
+              custom_value: false
+              mode: list
+        lockout_protection:
+          name: 🔒 Lockout protection
+          description: Enable lockout protection, e.g. for terrace covers.
+          default: false
+          selector:
+            boolean:
+    device_entities:
+      name: Devices
+      icon: mdi:devices
+      description: Define the devices used in this blueprint accoring to the selected options.
+      input:
+        cover:
+          name: "🏠 Select Cover"
+          description: |-
+            Which blind or roller shutter should be automated?
 
-      default: [auto_open, auto_close, auto_vent]
-      selector:
-        select:
-          options:
-            - label: "⬆️ Enable automatic daily cover opening"
-              value: "auto_open"
-            - label: "⬇️ Enable automatic daily cover closing"
-              value: "auto_close"
-            - label: "🪟 Enable ventilation"
-              value: "auto_vent"
-            - label: "🛡️ Enable privacy protection"
-              value: "auto_privacy"
-            - label: "🛌 Enable presence detection"
-              value: "auto_presence"
-            - label: "🥵 Enable Shading"
-              value: "auto_shading"
-          multiple: true
-          sort: false
-          custom_value: false
-          mode: list
-
-    cover:
-      name: "🏠 Select Cover"
-      description: |-
-        Which blind or roller shutter should be automated?
-
-        <details>
-        <summary><strong>Lala</strong></summary>
-
-
-        In principle, you can use a group here. But it is strongly recommended to create **one automation per cover**.
-
-        </details>
-      selector:
-        entity:
-          filter:
-            - domain: cover
-
-    pos_vent_threshold:
-      name: 🪟 Position - Ventilation Threshold
-      description: If cover position is >= ventilation threshold, cover won't move into ventilation position (see _Position (Ventilation)_).
-      default: 80
-      selector:
-        number:
-          min: 0
-          max: 99
-          step: 5
-          unit_of_measurement: "%"
-
-    pos_vent:
-      name: 🪟 Position - Ventilation
-      description: Set position of cover when cover is current position is < 80 %. This threshold can be adjusted with _Position (Ventilation Threshold)_.
-      default: 80
-      selector:
-        number:
-          min: 0
-          max: 100
-          step: 5
-          unit_of_measurement: "%"
-
-    pos_close:
-      name: ⬇️ Position - Close
-      description: Set position of cover (100% open, 0% closed)
-      default: 0
-      selector:
-        number:
-          min: 0
-          max: 100
-          step: 5
-          unit_of_measurement: "%"
-
-    illuminance_sensor:
-      name: 🔆 Select Illuminance sensor
-      selector:
-        entity:
-          filter:
-            - domain: sensor
-              device_class: illuminance
-
-    lux_privacy:
-      name: 🛡️ Illuminance Threshold - Privacy Protection
-      description: Set the illuminance threshold (lx) when cover should move to its privacy protection position in the evening.
-      default: 350.0
-      selector:
-        number:
-          min: 0.0
-          max: 1000.0
-          unit_of_measurement: lx
-          step: 10.0
-
-    lux_close:
-      name: 🔆 Illuminance Threshold - Close
-      description: Set the illuminance threshold (lx) when cover should move to its close position.
-      default: 50.0
-      selector:
-        number:
-          min: 0.0
-          max: 1000.0
-          unit_of_measurement: lx
-          step: 10
-
-    lux_open:
-      name: 🔆 Illuminance Threshold - Open
-      description: Set the illuminance threshold (lx) when cover should be opened in the morning (if privacy protection is not enabled).
-      default: 450.0
-      selector:
-        number:
-          min: 0.0
-          max: 600.0
-          unit_of_measurement: lx
-          step: 10
-
-    time_open_workday:
-      name: 🛡️ Time to open Cover (Privacy enabled, weekday)
-      description: |-
-        Open cover at workdays if privacy protection is enabled.
+            <details>
+            <summary><strong>Lala</strong></summary>
 
 
-        Require _Enable privacy protection_. Optional
-      default: 08:00:00
-      selector:
-        time:
+            In principle, you can use a group here. But it is strongly recommended to create **one automation per cover**.
 
-    time_open_weekend:
-      name: 🛡️ Time to open Cover (Privacy enabled, weekend)
-      description: |-
-        Open cover at weekends or holidays if privacy protection is enabled. Cover might be opened later if presence sensor is defined.
+            </details>
+          selector:
+            entity:
+              filter:
+                - domain: cover
 
+        illuminance_sensor:
+          name: 🔆 Select Illuminance sensor
+          selector:
+            entity:
+              filter:
+                - domain: sensor
+                  device_class: illuminance
 
-        Require _Enable privacy protection_. Optional
-      default: 08:30:00
-      selector:
-        time:
-
-    time_no_vent:
-      name: 🪟 Select time to avoid cover to move for ventilation
-      description: |-
-        This setting is usefull if you want to open the window during the night (e.g. in beedroom) and not to open the cover.
-
-
-        Require _Enable ventilation_ option. Optional.
-      default: 023:00:00
-      selector:
-        time:
-
-    time_vent_close_delay:
-      name: 🪟 Time delay to close cover (ventilation).
-      description: |-
-        With this setting accidental cover closing is avoided.
+        window_sensor:
+          name: 🪟 Select Window (binary) sensor
+          description: |-
+            Enables the automation to open the cover for ventilation purpose or move the cover only if window is closed.
 
 
-        Require _Enable ventilation_ option. Optional.
-      default: 3
-      selector:
-        number:
-          min: 0
-          max: 30
-          unit_of_measurement: "sec"
+            Require _Enable ventilation_ option. Optional.
+          default: []
+          selector:
+            entity:
+              filter:
+                - domain: binary_sensor
+                  device_class: [window, door]
 
-    window_sensor:
-      name: 🪟 Select Window (binary) sensor
-      description: |-
-        Enables the automation to open the cover for ventilation purpose or move the cover only if window is closed.
-
-
-        Require _Enable ventilation_ option. Optional.
-      default: []
-      selector:
-        entity:
-          filter:
-            - domain: binary_sensor
-              device_class: [window, door]
-
-    presence_sensor:
-      name: 🛌 Select presence (binary) sensor
-      description: |-
-        Enables the automation to open the cover in the morning after the last one has left the room. Helpful on bedrooms, especially at weekend.
+        presence_sensor:
+          name: 🛌 Select presence (binary) sensor
+          description: |-
+            Enables the automation to open the cover in the morning after the last one has left the room. Helpful on bedrooms, especially at weekend.
 
 
-        Require _Enable presence detection_ option. Optional.
-      default: []
-      selector:
-        entity:
-          filter:
-            - domain: binary_sensor
-              device_class: presence
+            Require _Enable presence detection_ option. Optional.
+          default: []
+          selector:
+            entity:
+              filter:
+                - domain: binary_sensor
+                  device_class: presence
 
-    time_presence_absence_duration:
-      name: 🛏️ Time of absence
-      description: |-
-        Adds time to presence sensors detecting absense.
+        workday_sensor:
+          name: 📅 Select Workday (binary) sensor
+          selector:
+            entity:
+              filter:
+                - domain: binary_sensor
+
+    positions:
+      name: Positions
+      icon: mdi:window-shutter-cog
+      description: Define the positions of the cover for open/close/ventilation.
+      collapsed: true
+      input:
+        pos_vent_threshold:
+          name: 🪟 Position - Ventilation Threshold
+          description: If cover position is >= ventilation threshold, cover won't move into ventilation position (see _Position (Ventilation)_).
+          default: 80
+          selector:
+            number:
+              min: 0.0
+              max: 99.0
+              step: 5.0
+              unit_of_measurement: "%"
+
+        pos_vent:
+          name: 🪟 Position - Ventilation
+          description: Set position of cover when cover is current position is < 80 %. This threshold can be adjusted with _Position (Ventilation Threshold)_.
+          default: 80
+          selector:
+            number:
+              min: 0.0
+              max: 100.0
+              step: 5.0
+              unit_of_measurement: "%"
+
+        pos_close:
+          name: ⬇️ Position - Close
+          description: Set position of cover (100% open, 0% closed)
+          default: 0
+          selector:
+            number:
+              min: 0.0
+              max: 100.0
+              step: 5.0
+              unit_of_measurement: "%"
+
+    illuminance:
+      name: Illuminance Settings
+      icon: mdi:sun-wireless-outline
+      description: Define the illuminance thresholds to move the cover.
+      collapsed: true
+      input:
+        lux_privacy:
+          name: 🛡️ Illuminance Threshold - Privacy Protection
+          description: Set the illuminance threshold (lx) when cover should move to its privacy protection position in the evening.
+          default: 350.0
+          selector:
+            number:
+              min: 0.0
+              max: 1000.0
+              unit_of_measurement: lx
+              step: 10.0
+
+        lux_close:
+          name: 🔆 Illuminance Threshold - Close
+          description: Set the illuminance threshold (lx) when cover should move to its close position.
+          default: 50.0
+          selector:
+            number:
+              min: 0.0
+              max: 1000.0
+              unit_of_measurement: lx
+              step: 10
+
+        lux_open:
+          name: 🔆 Illuminance Threshold - Open
+          description: Set the illuminance threshold (lx) when cover should be opened in the morning (if privacy protection is not enabled).
+          default: 450.0
+          selector:
+            number:
+              min: 0.0
+              max: 600.0
+              unit_of_measurement: lx
+              step: 10
+
+    times:
+      name: Time Settings
+      icon: mdi:timer-alert-outline
+      description: Define the times to move the cover.
+      collapsed: true
+      input:
+        time_open_workday:
+          name: 🛡️ Time to open Cover (Privacy enabled, weekday)
+          description: |-
+            Open cover at workdays if privacy protection is enabled.
 
 
-        Require _Enable presence detection_ option. Optional.
-      default: 7.5
-      selector:
-        number:
-          min: 1.0
-          max: 30.0
-          unit_of_measurement: min
-          mode: slider
-          step: 0.5
+            Require _Enable privacy protection_. Optional
+          default: 08:00:00
+          selector:
+            time:
+
+        time_open_weekend:
+          name: 🛡️ Time to open Cover (Privacy enabled, weekend)
+          description: |-
+            Open cover at weekends or holidays if privacy protection is enabled. Cover might be opened later if presence sensor is defined.
+
+
+            Require _Enable privacy protection_. Optional
+          default: 08:30:00
+          selector:
+            time:
+
+        time_no_vent:
+          name: 🪟 Select time to avoid cover to move for ventilation
+          description: |-
+            This setting is usefull if you want to open the window during the night (e.g. in beedroom) and not to open the cover.
+
+
+            Require _Enable ventilation_ option. Optional.
+          default: 023:00:00
+          selector:
+            time:
+
+        time_vent_close_delay:
+          name: 🪟 Time delay to close cover (ventilation).
+          description: |-
+            With this setting accidental cover closing is avoided.
+
+            Require _Enable ventilation_ option. Optional.
+          default: 3
+          selector:
+            number:
+              min: 0
+              max: 30
+              unit_of_measurement: "sec"
+
+        time_presence_absence_duration:
+          name: 🛏️ Time of absence
+          description: |-
+            Adds time to presence sensors detecting absense.
+
+            Require _Enable presence detection_ option. Optional.
+          default: 7.5
+          selector:
+            number:
+              min: 1.0
+              max: 30.0
+              unit_of_measurement: min
+              mode: slider
+              step: 0.5
 
     # shading_sensor:
     #   name: The shading sensor to use
@@ -275,13 +311,6 @@ blueprint:
     #       min: 0.0
     #       max: 359.9
     #       step: 5.0
-
-    workday_sensor:
-      name: 📅 Select Workday (binary) sensor
-      selector:
-        entity:
-          filter:
-            - domain: binary_sensor
 
 mode: single
 
@@ -442,6 +471,21 @@ action:
               - wait_for_trigger:
                   - platform: template
                     value_template: "{{ is_state(tv_window_sensor, ['false', 'off']) }}"
+              - if:
+                  - "{{ pos_close != 0 }}"
+                then:
+                  - action: cover.set_cover_position
+                    metadata: {}
+                    data:
+                      position: "{{ pos_close }}"
+                    target:
+                      entity_id: !input cover
+                else:
+                  - action: cover.close_cover
+                    metadata: {}
+                    data: {}
+                    target:
+                      entity_id: !input cover
           - if:
               - "{{ trigger.id == 't_lux_close' or trigger.id == 't_privacy_protection' }}"
               - "{{ is_evening }}"
@@ -449,14 +493,14 @@ action:
               - if:
                   - "{{ pos_close != 0 }}"
                 then:
-                  - service: cover.set_cover_position
+                  - action: cover.set_cover_position
                     metadata: {}
                     data:
                       position: "{{ pos_close }}"
                     target:
                       entity_id: !input cover
                 else:
-                  - service: cover.close_cover
+                  - action: cover.close_cover
                     metadata: {}
                     data: {}
                     target:
@@ -466,11 +510,11 @@ action:
                   - "{{ trigger.id == 't_vent_close' }}"
                   - "{{ in_vent_position }}"
                 then:
-                  - service: scene.turn_on
+                  - action: scene.turn_on
                     data: {}
                     target:
                       entity_id: "{{ scene_entity }}"
-                  - service: scene.delete
+                  - action: scene.delete
                     data: {}
                     target:
                       entity_id: "{{ scene_entity }}"
@@ -487,7 +531,7 @@ action:
               - "{{ trigger.id == 't_lux_open' or trigger.id == 't_terminate_privacy_protection' or ( trigger.id == 't_terminate_privacy_protection_with_presence' and is_state(tv_presence_sensor, 'off') ) }}"
               - "{{ not is_night }}"
             then:
-              - service: cover.open_cover
+              - action: cover.open_cover
                 metadata: {}
                 data: {}
                 target:
@@ -503,7 +547,7 @@ action:
                       value_template: "{{ is_state(tv_presence_sensor, 'off') }}"
                       for:
                         minutes: !input time_presence_absence_duration
-                  - service: cover.open_cover
+                  - action: cover.open_cover
                     metadata: {}
                     data: {}
                     target:
@@ -514,13 +558,13 @@ action:
                       - "{{ current_position < pos_vent_threshold }}"
                       - "{{ not is_night }}"
                     then:
-                      - service: scene.create
+                      - action: scene.create
                         metadata: {}
                         data:
                           scene_id: "{{ scene_id }}"
                           snapshot_entities:
                             - !input cover
-                      - service: cover.set_cover_position
+                      - action: cover.set_cover_position
                         metadata: {}
                         data:
                           position: "{{ pos_vent }}"
@@ -531,6 +575,6 @@ action:
       - "{{ trigger.id == 't_vent_delete_scene' }}"
       - "{{ states(scene_entity) | is_defined }}"
     then:
-      - service: scene.delete
+      - action: scene.delete
         target:
           entity_id: "{{ scene_entity }}"
