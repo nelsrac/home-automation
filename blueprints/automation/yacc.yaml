@@ -188,7 +188,7 @@ blueprint:
         lux_privacy:
           name: 🛡️ Illuminance Threshold - Privacy Protection
           description: Set the illuminance threshold (lx) when cover should move to its privacy protection position in the evening.
-          default: 350.0
+          default: 300.0
           selector:
             number:
               min: 0.0
@@ -210,7 +210,7 @@ blueprint:
         lux_open:
           name: 🔆 Illuminance Threshold - Open
           description: Set the illuminance threshold (lx) when cover should be opened in the morning (if privacy protection is not enabled).
-          default: 450.0
+          default: 300.0
           selector:
             number:
               min: 0.0
@@ -352,8 +352,8 @@ variables:
   in_close_position: "{{ current_position | int() == pos_close }}"
 
   is_morning: "{{ now() >= today_at('04:30:00') and now() < today_at('12:00:00') }}"
-  is_afternoon: "{{ now() >= today_at('12:00:00') and now() < today_at('16:00:00') }}"
-  is_evening: "{{ now() >= today_at('16:00:00') and now() < today_at('23:59:59') }}"
+  is_afternoon: "{{ now() >= today_at('12:00:00') and now() < today_at('15:30:00') }}"
+  is_evening: "{{ now() >= today_at('15:30:00') and now() < today_at('23:59:59') }}"
   is_night: "{{ now() >= today_at('00:00:00') and now() < today_at('04:30:00') }}"
 
 trigger:
