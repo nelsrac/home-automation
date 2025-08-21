@@ -31,10 +31,12 @@ blueprint:
     <summary>Feature</summary>
     ## Features
 
-    - feat 1
-
-    - feat 2
-
+    - Control your cover related to outdoor illuminance and window state (open/close).
+    - Open cover in the morning if illuminance is above a threshold.
+    - Close cover in the evening if illuminance is below a threshold.
+    - Open cover for ventilation if window is open.
+    - Close cover after ventilation if window is closed.
+    - Open cover in the morning if privacy protection is not enabled.
 
     lala
     </details>
