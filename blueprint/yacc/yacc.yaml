@@ -37,8 +37,8 @@ blueprint:
     - Open cover for ventilation if window is open.
     - Close cover after ventilation if window is closed.
     - Open cover in the morning if privacy protection is not enabled.
+    - Open cover in the morning if presence sensor is not active and privacy protectin is enable.
 
-    lala
     </details>
 
   domain: automation
